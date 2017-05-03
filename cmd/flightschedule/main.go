@@ -12,8 +12,11 @@ import (
 )
 
 func main() {
-	home := os.Getenv("HOME")
-	sb := launchpad.SecretsFileBackend{File: home + "/.go-launchpad/launchpad.secrets.json"}
+	rootDir := os.Getenv("SNAP_DATA")
+	if rootDir == "" {
+		rootDir = os.Getenv("HOME")
+	}
+	sb := launchpad.SecretsFileBackend{File: rootDir + "/.go-launchpad/launchpad.secrets.json"}
 
 	lp := launchpad.NewClient(nil, "Example Client")
 	err := lp.LoginWith(&sb)

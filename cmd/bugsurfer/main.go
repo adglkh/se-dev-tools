@@ -30,10 +30,14 @@ import (
 // Retrun bug id and bug title out of Task title which format is:
 // Bug $ID in $PACKAGE ($ISTRIBUTION): "$TITLE"
 func getIdAndTitle(title string) (string, string) {
-	// one will contain ID part, two will contain TITLE part
-	res := strings.Split(title, ":")
-	id := strings.Split(res[0], " ")[1]
-	return id, res[1][2 : len(res[1])-1]
+	cut := strings.Index(title, ":")
+
+	one := title[:cut]
+	two := title[cut:]
+
+	res := two
+	id := strings.Split(one, " ")[1][1:]
+	return id, res[3 : len(res)-1]
 }
 
 func shorten(s string, length uint) string {

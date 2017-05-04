@@ -88,4 +88,5 @@ $
 
 ```
 go get github.com/bergotorino/go-launchpad/launchpad
+go get github.com/bergotorino/go-oauth/oauth
 ```

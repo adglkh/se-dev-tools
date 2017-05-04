@@ -55,11 +55,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	snapName := args[0]
+	*snapName = args[0]
 	var storeResponses []StoreResponse
 
 	for _, channel := range channels {
-		url := fmt.Sprintf(apiURL, snapName, channel)
+		url := fmt.Sprintf(apiURL, *snapName, channel)
 
 		jsonResponses := make(chan io.ReadCloser)
 

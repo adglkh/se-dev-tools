@@ -33,7 +33,11 @@ func main() {
 	if rootDir == "" {
 		rootDir = os.Getenv("HOME")
 	}
-	sb := launchpad.SecretsFileBackend{File: rootDir + "/.go-launchpad/launchpad.secrets.json"}
+	rootDir += "/.go-launchpad"
+	if _, err := os.Stat(rootDir); os.IsNotExist(err) {
+		os.Mkdir(rootDir, os.ModePerm)
+	}
+	sb := launchpad.SecretsFileBackend{File: rootDir + "/launchpad.secrets.json"}
 
 	lp := launchpad.NewClient(nil, "Example Client")
 	err := lp.LoginWith(&sb)

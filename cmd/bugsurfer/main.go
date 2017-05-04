@@ -132,8 +132,13 @@ func main() {
 	if rootDir == "" {
 		rootDir = os.Getenv("HOME")
 	}
-	configFile := rootDir + "/.go-launchpad/bugsurfer.config"
-	secretsFile := rootDir + "/.go-launchpad/launchpad.secrets.json"
+	rootDir += "/.go-launchpad"
+	configFile := rootDir + "/bugsurfer.config"
+	secretsFile := rootDir + "/launchpad.secrets.json"
+
+	if _, err := os.Stat(rootDir); os.IsNotExist(err) {
+		os.Mkdir(rootDir, os.ModePerm)
+	}
 
 	src, err := readConfigFile(configFile)
 	if err != nil {

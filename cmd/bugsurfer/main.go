@@ -25,6 +25,7 @@ import (
 	"os"
 	"strings"
 	"text/tabwriter"
+	"time"
 )
 
 // Retrun bug id and bug title out of Task title which format is:
@@ -84,6 +85,22 @@ func readConfigFile(file string) ([]Source, error) {
 const maxEntries = 10
 const maxTitleLength = 60
 
+func printBugs(category string, bugs []launchpad.BugTask) {
+	fmt.Printf("\nRecent %s bugs:\n\n", category)
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
+	for i, bug := range bugs {
+		_, title := getIdAndTitle(bug.Title)
+		d := time.Since(bug.Core.DateLastUpdated)
+		h := uint(d.Hours() + 0.5)
+		fmt.Fprintf(w, " %d\t| %s\t| %s\n",
+			h, shorten(title, maxTitleLength), bug.WebLink)
+		if i > maxEntries {
+			break
+		}
+	}
+	w.Flush()
+}
+
 func getBugsFor(lp *launchpad.Launchpad, src Source) {
 	distribution, err := lp.Distributions(src.Dist)
 	if err != nil {
@@ -112,17 +129,7 @@ func getBugsFor(lp *launchpad.Launchpad, src Source) {
 		}
 	}
 
-	fmt.Printf("\nRecent %s bugs:\n\n", src.Dist+"/"+src.Pkg)
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	for i, bug := range bugs {
-		id, title := getIdAndTitle(bug.Title)
-		fmt.Fprintf(w, " %s\t| %s\t| %s\n",
-			id, shorten(title, maxTitleLength), bug.WebLink)
-		if i > maxEntries {
-			break
-		}
-	}
-	w.Flush()
+	printBugs(src.Dist+"/"+src.Pkg, bugs)
 }
 
 func main() {
@@ -171,17 +178,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("Bugs assigned to you:\n")
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	for i, bug := range bgs {
-		id, title := getIdAndTitle(bug.Title)
-		fmt.Fprintf(w, " %s\t| %s\t| %s\n",
-			id, shorten(title, maxTitleLength), bug.WebLink)
-		if i > maxEntries {
-			break
-		}
-	}
-	w.Flush()
+	printBugs("kzapalowicz", bgs)
 
 	for _, s := range src {
 		getBugsFor(lp, s)

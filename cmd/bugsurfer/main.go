@@ -178,7 +178,7 @@ func main() {
 		return
 	}
 
-	printBugs("kzapalowicz", bgs)
+	printBugs(person.Name, bgs)
 
 	for _, s := range src {
 		getBugsFor(lp, s)

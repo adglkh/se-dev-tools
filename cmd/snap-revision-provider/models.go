@@ -20,7 +20,7 @@ package main
 import "time"
 
 type StoreResponse struct {
-	LastUpdated          time.Time     `json:"last_updated"`
+	LastUpdated          *time.Time    `json:"last_updated"`
 	Channels             []string      `json:"channels"`
 	Price                float32       `json:"price"`
 	Epoch                string        `json:"epoch"`

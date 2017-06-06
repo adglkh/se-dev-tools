@@ -144,7 +144,10 @@ func main() {
 	secretsFile := rootDir + "/launchpad.secrets.json"
 
 	if _, err := os.Stat(rootDir); os.IsNotExist(err) {
-		os.Mkdir(rootDir, os.ModePerm)
+		err := os.Mkdir(rootDir, os.ModePerm)
+		if err != nil {
+			log.Fatal("Failed to create go-launchpad dir: ", err)
+		}
 	}
 
 	src, err := readConfigFile(configFile)

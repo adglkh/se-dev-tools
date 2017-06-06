@@ -29,7 +29,7 @@ import (
 )
 
 func main() {
-	rootDir := os.Getenv("SNAP_DATA")
+	rootDir := os.Getenv("SNAP_USER_DATA")
 	if rootDir == "" {
 		rootDir = os.Getenv("HOME")
 	}

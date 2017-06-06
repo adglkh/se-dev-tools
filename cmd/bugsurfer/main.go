@@ -135,7 +135,7 @@ func getBugsFor(lp *launchpad.Launchpad, src Source) {
 func main() {
 
 	// Figure out where to read data from
-	rootDir := os.Getenv("SNAP_DATA")
+	rootDir := os.Getenv("SNAP_USER_DATA")
 	if rootDir == "" {
 		rootDir = os.Getenv("HOME")
 	}

@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -34,7 +33,7 @@ var (
 )
 
 var channels = []string{"stable", "candidate", "beta", "edge"}
-var architectures = []string{"armhf", "arm64", "i386", "amd64"}
+var architectures = []string{"armhf", "arm64", "i386", "amd64", "ppc64el"}
 
 const apiURL = "https://search.apps.ubuntu.com/api/v1/snaps/details/%s?channel=%s"
 
@@ -61,7 +60,7 @@ func main() {
 	for _, channel := range channels {
 		url := fmt.Sprintf(apiURL, *snapName, channel)
 
-		jsonResponses := make(chan io.ReadCloser)
+		responses := make(chan *http.Response)
 
 		var wg sync.WaitGroup
 		wg.Add(len(architectures) * 2)
@@ -85,17 +84,17 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				} else {
-					jsonResponses <- resp.Body
+					responses <- resp
 				}
 			}(arch, url)
 		}
 
 		// Collect and process the results
 		go func() {
-			for response := range jsonResponses {
-				defer response.Close()
+			for resp := range responses {
+				defer resp.Body.Close()
 				var tmp StoreResponse
-				err := json.NewDecoder(response).Decode(&tmp)
+				err := json.NewDecoder(resp.Body).Decode(&tmp)
 				if err != nil {
 					log.Fatal(err)
 				} else {
